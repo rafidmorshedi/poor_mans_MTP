@@ -2,6 +2,8 @@
 library("tidyverse")
 library("lubridate")
 library("stringi")
+library("grid")
+library("scales")
 
 options(digits = 12)
 options(digits.secs = 3)
@@ -16,5 +18,47 @@ df = df_raw %>% mutate(
   time_posix = as_datetime(time,tz = "Australia/Sydney")
 )
 
+#make all the plots an put them on a single place
+roll_plot = ggplot(df,aes(x=time_posix,y=Roll))+
+  geom_line()+
+  scale_x_datetime(breaks= date_breaks("5 min"))+
+  #theme_minimal() +
+  theme(axis.title.x = element_blank())
+gFx_plot = ggplot(df,aes(x=time_posix,y=gFx))+
+  geom_line()+
+  scale_x_datetime(breaks= date_breaks("5 min"))+
+  #theme_minimal() +
+  theme(axis.title.x = element_blank())
+gFy_plot = ggplot(df,aes(x=time_posix,y=gFy))+
+  geom_line()+
+  scale_x_datetime(breaks= date_breaks("5 min"))+
+  #theme_minimal() +
+  theme(axis.title.x = element_blank())
+gFz_plot = ggplot(df,aes(x=time_posix,y=gFz))+
+  geom_line()+
+  scale_x_datetime(breaks= date_breaks("5 min"))+
+  #theme_minimal() +
+  theme(axis.title.x = element_blank())
+pitch_plot = ggplot(df,aes(x=time_posix,y=Pitch))+
+  geom_line()+
+  scale_x_datetime(breaks= date_breaks("5 min"))+
+  #theme_minimal() +
+  theme(axis.title.x = element_blank())
+#initaliase the saving of the pdf
+# filePath = "figs/signalsVsTime.pdf"
+# pdf(filePath,width=11.69, height=8.27, paper='a4r')
 
-ggplot(df,aes(x=time_posix,y=Azimuth))+geom_line()
+#plot the results on a graph
+grid.newpage()
+grid.draw(rbind(ggplotGrob(roll_plot), 
+                ggplotGrob(gFx_plot),
+                ggplotGrob(gFy_plot),
+                ggplotGrob(gFz_plot),
+                ggplotGrob(pitch_plot),
+                size = "last"))
+
+# dev.off()
+
+
+
+

@@ -4,6 +4,7 @@ library("lubridate")
 library("stringi")
 library("grid")
 library("scales")
+library("NbClust")
 
 options(digits = 12)
 options(digits.secs = 3)
@@ -18,29 +19,39 @@ df = df_raw %>% mutate(
   time_posix = as_datetime(time,tz = "Australia/Sydney")
 )
 
+#cluster the data
+#try kmeans clustering
+fit.km = kmeans(df[,2:8],4,nstart = 20)
+
+
+df = df %>% 
+  mutate(
+    cluster = as.factor(fit.km$cluster)
+  )
+
 #make all the plots an put them on a single place
-roll_plot = ggplot(df,aes(x=time_posix,y=Roll))+
-  geom_line()+
+roll_plot = ggplot(df,aes(x=time_posix, color = cluster, y=Roll))+
+  geom_point(size = 0.4)+
   scale_x_datetime(breaks= date_breaks("5 min"))+
   #theme_minimal() +
   theme(axis.title.x = element_blank())
-gFx_plot = ggplot(df,aes(x=time_posix,y=gFx))+
-  geom_line()+
+gFx_plot = ggplot(df,aes(x=time_posix, color = cluster,y=gFx))+
+  geom_point(size = 0.4)+
   scale_x_datetime(breaks= date_breaks("5 min"))+
   #theme_minimal() +
   theme(axis.title.x = element_blank())
-gFy_plot = ggplot(df,aes(x=time_posix,y=gFy))+
-  geom_line()+
+gFy_plot = ggplot(df,aes(x=time_posix, color = cluster,y=gFy))+
+  geom_point(size = 0.4)+
   scale_x_datetime(breaks= date_breaks("5 min"))+
   #theme_minimal() +
   theme(axis.title.x = element_blank())
-gFz_plot = ggplot(df,aes(x=time_posix,y=gFz))+
-  geom_line()+
+gFz_plot = ggplot(df,aes(x=time_posix, color = cluster,y=gFz))+
+  geom_point(size = 0.4)+
   scale_x_datetime(breaks= date_breaks("5 min"))+
   #theme_minimal() +
   theme(axis.title.x = element_blank())
-pitch_plot = ggplot(df,aes(x=time_posix,y=Pitch))+
-  geom_line()+
+pitch_plot = ggplot(df,aes(x=time_posix, color = cluster,y=Pitch))+
+  geom_point(size = 0.4)+
   scale_x_datetime(breaks= date_breaks("5 min"))+
   #theme_minimal() +
   theme(axis.title.x = element_blank())
